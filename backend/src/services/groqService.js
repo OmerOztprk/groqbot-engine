@@ -44,7 +44,6 @@ const sendToGroq = async (userMessage, sessionId = 'default', language = null, c
     
     const conversationHistory = conversationCache.get(sessionId);
     
-
     if (conversationHistory.length > 9) {
       conversationHistory.splice(0, conversationHistory.length - 8);
     }
@@ -56,13 +55,13 @@ const sendToGroq = async (userMessage, sessionId = 'default', language = null, c
     
     let systemInstruction;
     if (detectedLanguage === 'tr') {
-      systemInstruction = "Sen yardımcı bir yapay zeka asistanısın. Kullanıcı Türkçe sorduğunda Türkçe, İngilizce sorduğunda İngilizce yanıt vermelisin. Türkçe yanıtlarında doğal ve akıcı bir dil kullanmaya özen göster. Nazik, bilgilendirici ve yararlı yanıtlar sun.";
+      systemInstruction = "Sen yardımcı bir yapay zeka asistanısın. Kullanıcı Türkçe sorduğunda Türkçe, İngilizce sorduğunda İngilizce yanıt vermelisin. Türkçe yanıtlarında doğal ve akıcı bir dil kullanmaya özen göster. Nazik, bilgilendirici ve yararlı yanıtlar sun. Eğer kullanıcı bir dosya paylaşırsa, içeriğini dikkatlice analiz et ve dosya içeriğine dayalı olarak tam ve doğru yanıtlar ver.";
       
       if (customPrompt) {
         systemInstruction += ` ${customPrompt}`;
       }
     } else {
-      systemInstruction = "You are a helpful AI assistant. Respond in English when the user writes in English, and in Turkish when they write in Turkish. Ensure your Turkish responses are natural and fluent. Be polite, informative, and helpful in your responses.";
+      systemInstruction = "You are a helpful AI assistant. Respond in English when the user writes in English, and in Turkish when they write in Turkish. Ensure your Turkish responses are natural and fluent. Be polite, informative, and helpful in your responses. If the user shares a file, carefully analyze its content and provide complete and accurate answers based on the file content.";
       
       if (customPrompt) {
         systemInstruction += ` ${customPrompt}`;

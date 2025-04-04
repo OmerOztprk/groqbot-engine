@@ -5,7 +5,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Google Fonts doğru şekilde import edildi */
+/* Google Fonts import */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&display=swap');
 
 body {
@@ -89,6 +89,7 @@ body {
     padding: 16px;
     border-top: 1px solid #eaeaea;
     background-color: white;
+    align-items: center;
 }
 
 #user-input {
@@ -327,4 +328,127 @@ body {
     to {
         opacity: 0;
     }
+}
+
+/* Dosya yükleme bölümü */
+.file-upload-container {
+    position: relative;
+    margin-right: 8px;
+}
+
+#file-upload-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    border: none;
+    color: #4d1ab7;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+#file-upload-toggle:hover {
+    background-color: #e0e0e0;
+}
+
+/* Dropzone panel stil ve görünürlükleri - GÜNCELLENDİ */
+#dropzone-panel {
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    width: 300px;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+#dropzone-panel.hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none !important;
+    visibility: hidden;
+}
+
+/* Dropzone container düzeltildi */
+#dropzone-container {
+    cursor: pointer;
+}
+
+/* Dropzone içerik alanı */
+.dropzone {
+    min-height: 150px;
+    border: 2px dashed #4d1ab7;
+    border-radius: 6px;
+    background: #f9f9f9;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer !important;
+}
+
+.dropzone .dz-message {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Mutlaka tıklanabilir olması sağlandı */
+.dropzone .dz-clickable,
+.dz-clickable * {
+    cursor: pointer !important;
+}
+
+.dropzone-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.dropzone-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.dropzone-buttons button:hover {
+    background-color: #e0e0e0;
+}
+
+/* Dosya önizleme stilini iyileştir */
+.dropzone .dz-preview .dz-image {
+    border-radius: 8px;
+}
+
+/* Dosya mesaj stilleri */
+.file-message {
+    background-color: #f0f8ff !important;
+    border-left: 3px solid #4d1ab7 !important;
+}
+
+.file-message .file-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-message .file-icon {
+    font-size: 20px;
+    color: #4d1ab7;
+}
+
+.file-message .file-name {
+    font-weight: 500;
+}
+
+.file-message .file-size {
+    color: #666;
+    font-size: 12px;
 }

@@ -4,11 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Groq Chatbot</title>
+    <!-- Dropzone'u önce yüklüyoruz -->
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <!-- Auto-discover devre dışı bırakma -->
+    <script>
+      window.Dropzone = window.Dropzone || {};
+      window.Dropzone.autoDiscover = false;
+    </script>
     <link rel="stylesheet" href="style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   </head>
   <body>
     <div class="chat-container">
@@ -44,6 +49,24 @@
       </div>
 
       <div class="chat-input-container">
+        <div class="file-upload-container">
+          <button id="file-upload-toggle" title="Dosya Yükle">
+            <i class="fa-solid fa-paperclip"></i>
+          </button>
+          <div id="dropzone-panel" class="hidden">
+            <!-- Dropzone container'ı basitleştirildi -->
+            <div id="dropzone-container">
+              <div id="file-dropzone" class="dropzone">
+                <div class="dz-message" data-dz-message>
+                  <span>Dosyaları buraya sürükleyin veya tıklayarak seçin</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropzone-buttons">
+              <button id="dropzone-close">Kapat</button>
+            </div>
+          </div>
+        </div>
         <textarea
           id="user-input"
           placeholder="Mesajınızı yazın..."
@@ -54,6 +77,7 @@
         </button>
       </div>
     </div>
+    
     <script src="script.js"></script>
   </body>
 </html>
