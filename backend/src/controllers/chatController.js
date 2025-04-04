@@ -3,9 +3,23 @@ const { v4: uuidv4 } = require('uuid');
 
 const activeSessions = {};
 
+const cleanupInactiveSessions = () => {
+  const now = new Date();
+  const expirationTime = 24 * 60 * 60 * 1000;
+  
+  Object.keys(activeSessions).forEach(sessionId => {
+    const session = activeSessions[sessionId];
+    const timeDiff = now - session.lastActivity;
+    
+    if (timeDiff > expirationTime) {
+      delete activeSessions[sessionId];
+    }
+  });
+};
+
 const handleChat = async (req, res, next) => {
   try {
-    const { userMessage, sessionId = null } = req.body;
+    const { userMessage, sessionId = null, customPrompt = '' } = req.body;
 
     if (!userMessage) {
       return res.status(400).json({ success: false, message: 'userMessage eksik' });
@@ -16,13 +30,22 @@ const handleChat = async (req, res, next) => {
     if (!activeSessions[currentSessionId]) {
       activeSessions[currentSessionId] = { 
         createdAt: new Date(), 
-        lastActivity: new Date() 
+        lastActivity: new Date(),
+        customPrompt: customPrompt
       };
     } else {
       activeSessions[currentSessionId].lastActivity = new Date();
+      if (customPrompt !== undefined) {
+        activeSessions[currentSessionId].customPrompt = customPrompt;
+      }
     }
 
-    const response = await sendToGroq(userMessage, currentSessionId);
+    const response = await sendToGroq(
+      userMessage, 
+      currentSessionId, 
+      null,
+      activeSessions[currentSessionId].customPrompt
+    );
 
     res.json({ 
       success: true, 
@@ -30,8 +53,15 @@ const handleChat = async (req, res, next) => {
       sessionId: currentSessionId
     });
     
-    if (Math.random() < 0.01) {
+    if (!global.requestCounter) {
+      global.requestCounter = 0;
+    }
+    
+    global.requestCounter++;
+    
+    if (global.requestCounter >= 100) {
       cleanupInactiveSessions();
+      global.requestCounter = 0;
     }
     
   } catch (error) {
@@ -45,16 +75,5 @@ const handleChat = async (req, res, next) => {
     });
   }
 };
-
-function cleanupInactiveSessions() {
-  const now = new Date();
-  const oneHourAgo = new Date(now - 60 * 60 * 1000);
-  
-  Object.keys(activeSessions).forEach(sessionId => {
-    if (activeSessions[sessionId].lastActivity < oneHourAgo) {
-      delete activeSessions[sessionId];
-    }
-  });
-}
 
 module.exports = { handleChat };

@@ -3,7 +3,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
     
+    const promptToggle = document.getElementById('prompt-toggle');
+    const promptPanel = document.getElementById('prompt-panel');
+    const promptInput = document.getElementById('prompt-input');
+    const promptSave = document.getElementById('prompt-save');
+    const promptReset = document.getElementById('prompt-reset');
+    
     let sessionId = localStorage.getItem('chatSessionId');
+    
+    const savedPrompt = localStorage.getItem('chatbotPrompt');
+    if (savedPrompt) {
+        promptInput.value = savedPrompt;
+    }
+    
+    promptToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        promptPanel.classList.toggle('hidden');
+    });
+
+    promptInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    
+    promptSave.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const promptText = promptInput.value.trim();
+        localStorage.setItem('chatbotPrompt', promptText);
+        promptPanel.classList.add('hidden');
+        
+        showNotification('Chatbot stili kaydedildi!');
+    });
+    
+    promptReset.addEventListener('click', (e) => {
+        e.stopPropagation();
+        promptInput.value = '';
+        localStorage.removeItem('chatbotPrompt');
+        promptPanel.classList.add('hidden');
+        
+        showNotification('Chatbot stili sıfırlandı!');
+    });
+    
+    document.addEventListener('click', (e) => {
+        if (!promptPanel.classList.contains('hidden') && 
+            !promptPanel.contains(e.target) && 
+            e.target !== promptToggle) {
+            promptPanel.classList.add('hidden');
+        }
+    });
+    
+    const showNotification = (message) => {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
+    };
     
     const loadSavedMessages = () => {
         const savedMessages = localStorage.getItem('chatMessages');
@@ -31,6 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
             messages.push({ text, sender });
         });
         
+        if (messages.length > 50) {
+            messages.splice(0, messages.length - 50);
+        }
+        
         localStorage.setItem('chatMessages', JSON.stringify(messages));
     };
 
@@ -53,9 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.error-message').forEach(el => el.remove());
 
         try {
-            const botMessageId = 'msg-' + Date.now();
-            addEmptyBotMessage(botMessageId);
-            removeLoadingIndicator(loadingId);
+            const customPrompt = localStorage.getItem('chatbotPrompt') || '';
 
             const response = await fetch('/api/chat', {
                 method: 'POST',
@@ -64,9 +123,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({ 
                     userMessage: message,
-                    sessionId: sessionId
+                    sessionId: sessionId,
+                    customPrompt: customPrompt
                 })
             });
+            
+            removeLoadingIndicator(loadingId);
+            
+            const botMessageId = 'msg-' + Date.now();
+            addEmptyBotMessage(botMessageId);
             
             if (response.ok) {
                 const data = await response.json();

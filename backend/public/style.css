@@ -5,6 +5,9 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Google Fonts doğru şekilde import edildi */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&display=swap');
+
 body {
     background-color: #f5f5f5;
     display: flex;
@@ -30,6 +33,7 @@ body {
     color: white;
     padding: 16px;
     text-align: center;
+    position: relative;
 }
 
 .chat-header h1 {
@@ -132,7 +136,7 @@ body {
     height: 8px;
     background-color: #999;
     border-radius: 50%;
-    animation: dotPulse 1.4s infinite ease-in-out;
+    animation: bounce 1.4s infinite ease-in-out;
 }
 
 .dot:nth-child(1) {
@@ -147,17 +151,12 @@ body {
     animation-delay: 0.4s;
 }
 
-@keyframes dotPulse {
-
-    0%,
-    100% {
-        transform: scale(0.8);
-        opacity: 0.6;
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: translateY(0);
     }
-
-    50% {
-        transform: scale(1.2);
-        opacity: 1;
+    40% {
+        transform: translateY(-8px);
     }
 }
 
@@ -184,11 +183,6 @@ body {
     }
 }
 
-@font-face {
-    font-family: 'Noto Sans';
-    src: url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&display=swap');
-}
-
 .message-content p {
     font-family: 'Noto Sans', 'Segoe UI', sans-serif;
     line-height: 1.5;
@@ -196,35 +190,141 @@ body {
     word-break: break-word;
 }
 
-@keyframes bounce {
-
-    0%,
-    80%,
-    100% {
-        transform: translateY(0);
-    }
-
-    40% {
-        transform: translateY(-8px);
-    }
+.prompt-container {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 100;
 }
 
-.dot {
-    width: 8px;
-    height: 8px;
-    background-color: #999;
+#prompt-toggle {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    animation: bounce 1.4s infinite ease-in-out;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
 }
 
-.dot:nth-child(1) {
-    animation-delay: 0s;
+#prompt-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
-.dot:nth-child(2) {
-    animation-delay: 0.2s;
+#prompt-panel {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    width: 280px;
+    transition: all 0.3s ease;
+    z-index: 200;
 }
 
-.dot:nth-child(3) {
-    animation-delay: 0.4s;
+#prompt-panel.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+#prompt-panel h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #333;
+    font-size: 16px;
+}
+
+#prompt-input {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    font-size: 14px;
+}
+
+.prompt-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+.prompt-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+#prompt-save {
+    background-color: #4d1ab7;
+    color: white;
+}
+
+#prompt-reset {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+#clear-chat {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+#clear-chat:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4d1ab7;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: slideIn 0.3s, fadeOut 0.3s 1.7s forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

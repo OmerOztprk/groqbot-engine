@@ -1,33 +1,59 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Groq Chatbot</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
     <div class="chat-container">
-        <div class="chat-header">
-            <h1><i class="fa-solid fa-robot"></i> Groq Chatbot</h1>
-        </div>
-        
-        <div class="chat-messages" id="chat-messages">
-            <div class="message bot-message">
-                <div class="message-content">
-                    <p>Merhaba! Ben Groq destekli bir chatbot'um. Bana bir şeyler sorabilirsin.</p>
-                </div>
+      <div class="chat-header">
+        <h1><i class="fa-solid fa-robot"></i> Groq Chatbot</h1>
+        <div class="prompt-container">
+          <button id="prompt-toggle" title="Chatbot Stilini Belirle">
+            <i class="fa-solid fa-sliders"></i>
+          </button>
+          <div id="prompt-panel" class="hidden">
+            <h3>Chatbot Stili</h3>
+            <textarea
+              id="prompt-input"
+              placeholder="Chatbot'un nasıl cevap vermesini istediğinizi yazın. Örn: 'Kısa ve öz cevaplar ver', 'Şair gibi konuş', 'Mizahi cevaplar ver'"
+            ></textarea>
+            <div class="prompt-buttons">
+              <button id="prompt-save">Kaydet</button>
+              <button id="prompt-reset">Sıfırla</button>
             </div>
+          </div>
         </div>
-        
-        <div class="chat-input-container">
-            <textarea id="user-input" placeholder="Mesajınızı yazın..." rows="1"></textarea>
-            <button id="send-button">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
+      </div>
+
+      <div class="chat-messages" id="chat-messages">
+        <div class="message bot-message">
+          <div class="message-content">
+            <p>
+              Merhaba! Ben Groq destekli bir chatbot'um. Bana bir şeyler
+              sorabilirsin.
+            </p>
+          </div>
         </div>
+      </div>
+
+      <div class="chat-input-container">
+        <textarea
+          id="user-input"
+          placeholder="Mesajınızı yazın..."
+          rows="1"
+        ></textarea>
+        <button id="send-button">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
     </div>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
