@@ -4,10 +4,14 @@ const chatRoutes = require('./routes/chatRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const multer = require('multer');
 const { handleFileUpload } = require('./controllers/uploadController');
+const { initCronJobs } = require('./services/cronService');
 
 const app = express();
 
 app.use(express.json());
+
+// Cron jobları başlat
+initCronJobs();
 
 // Dosya yükleme için storage ayarı
 const storage = multer.diskStorage({

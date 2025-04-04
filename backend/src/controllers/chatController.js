@@ -6,6 +6,7 @@ const activeSessions = {};
 const cleanupInactiveSessions = () => {
   const now = new Date();
   const expirationTime = 24 * 60 * 60 * 1000;
+  let cleanedCount = 0;
 
   Object.keys(activeSessions).forEach((sessionId) => {
     const session = activeSessions[sessionId];
@@ -13,13 +14,22 @@ const cleanupInactiveSessions = () => {
 
     if (timeDiff > expirationTime) {
       delete activeSessions[sessionId];
+      cleanedCount++;
     }
   });
+
+  console.log(`${cleanedCount} eski oturum temizlendi`);
+  return cleanedCount;
 };
 
 const handleChat = async (req, res, next) => {
   try {
-    const { userMessage, sessionId = null, customPrompt = "", fileInfo = null } = req.body;
+    const {
+      userMessage,
+      sessionId = null,
+      customPrompt = "",
+      fileInfo = null,
+    } = req.body;
 
     if (!userMessage) {
       return res
@@ -41,13 +51,16 @@ const handleChat = async (req, res, next) => {
         activeSessions[currentSessionId].customPrompt = customPrompt;
       }
     }
-    
+
     // Dosya içeriğini işle
     let processedMessage = userMessage;
     if (fileInfo && fileInfo.content) {
       // Dosya içeriğini mesaja ekle
       processedMessage = `${userMessage}\n\nDosya İçeriği:\n${fileInfo.content}`;
-      console.log("Dosya içeriği işlendi, ilk 50 karakter:", fileInfo.content.substring(0, 50) + "...");
+      console.log(
+        "Dosya içeriği işlendi, ilk 50 karakter:",
+        fileInfo.content.substring(0, 50) + "..."
+      );
     }
 
     const response = await sendToGroq(
@@ -85,4 +98,4 @@ const handleChat = async (req, res, next) => {
   }
 };
 
-module.exports = { handleChat };
+module.exports = { handleChat, cleanupInactiveSessions };
