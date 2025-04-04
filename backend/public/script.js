@@ -53,6 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.error-message').forEach(el => el.remove());
 
         try {
+            const botMessageId = 'msg-' + Date.now();
+            addEmptyBotMessage(botMessageId);
+            removeLoadingIndicator(loadingId);
+
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
@@ -63,8 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     sessionId: sessionId
                 })
             });
-
-            removeLoadingIndicator(loadingId);
             
             if (response.ok) {
                 const data = await response.json();
@@ -74,12 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         sessionId = data.sessionId;
                         localStorage.setItem('chatSessionId', sessionId);
                     }
-                    
-                    addMessageToChat(data.response, 'bot');
+                    await typeMessageGradually(botMessageId, data.response);
+                    saveMessages();
                 } else {
+                    document.getElementById(botMessageId).remove();
                     showError(data.message || 'Yanıt alınırken bir hata oluştu.');
                 }
             } else {
+                document.getElementById(botMessageId).remove();
                 const errorData = await response.json();
                 showError(errorData.message || 'Sunucu ile iletişim kurulurken bir hata oluştu.');
             }
@@ -90,9 +94,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const addEmptyBotMessage = (id) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message bot-message';
+        messageDiv.id = id;
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+
+        const paragraph = document.createElement('p');
+        paragraph.textContent = '';
+
+        contentDiv.appendChild(paragraph);
+        messageDiv.appendChild(contentDiv);
+        chatMessages.appendChild(messageDiv);
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    const typeMessageGradually = async (messageId, text) => {
+        const messageElement = document.getElementById(messageId);
+        if (!messageElement) return;
+        
+        const paragraph = messageElement.querySelector('p');
+        if (!paragraph) return;
+
+        paragraph.textContent = '';
+        
+        const minDelay = 10;
+        const maxDelay = 20;
+        
+        let currentIndex = 0;
+        
+        while (currentIndex < text.length) {
+            const chunkSize = Math.floor(Math.random() * 3) + 1;
+            const end = Math.min(currentIndex + chunkSize, text.length);
+            const chunk = text.substring(currentIndex, end);
+            
+            paragraph.textContent += chunk;
+            currentIndex = end;
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            const delay = Math.random() * (maxDelay - minDelay) + minDelay;
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+        
+        return true;
+    };
+
     const addMessageToChat = (text, sender, shouldSave = true) => {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}-message`;
+        messageDiv.id = 'msg-' + Date.now();
 
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
@@ -109,6 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shouldSave) {
             saveMessages();
         }
+        
+        return messageDiv.id;
     };
     
     const showError = (message) => {
